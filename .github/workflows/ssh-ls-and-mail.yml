@@ -28,4 +28,4 @@ jobs:
         run: |
           echo -e "Subject: GitHub Actions - $REPO_NAME\n\nsuccessful\nRepository: $REPO_NAME" | \
           msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on \
-          --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" --from=$SMTP_USER --ssl=on $MAIL_TO
+          --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" --from=$SMTP_USER --ssl=on $MAIL_TO 
