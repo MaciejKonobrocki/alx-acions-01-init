@@ -35,10 +35,4 @@ pipeline {
             }
         }
     }
-    
-    post {
-        always {
-            sh "docker image prune -f"
-        }
-    }
 }
