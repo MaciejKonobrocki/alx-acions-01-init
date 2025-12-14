@@ -1,0 +1,74 @@
+name: SSH LS and Mail
+env:
+  REPO_NAME: ${{ github.repository }}
+  SMTP_SERVER: mail.abix.info.pl
+  SMTP_PORT: 465
+  SMTP_USER: alx-kurs@abix.info.pl
+  SMTP_PASS: ${{ secrets.SMTP_PASS }}
+  MAIL_TO: adam@jurkiewicz.tech
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ssh_and_mail:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run ls -la on remote host
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "Witaj na zdalnym hoście!"
+            ls -la
+
+      - name: Send email with repository info
+        run: |
+          echo -e "Subject: GitHub Actions - $REPO_NAME\n\nWorkflow został wykonany poprawnie.\nRepozytorium: $REPO_NAME" | \
+          msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" $MAIL_TOname: SSH LS and Mail
+env:
+  REPO_NAME: ${{ github.repository }}
+  SMTP_SERVER: mail.abix.info.pl
+  SMTP_PORT: 465
+  SMTP_USER: alx-kurs@abix.info.pl
+  SMTP_PASS: ${{ secrets.SMTP_PASS }}
+  MAIL_TO: adam@jurkiewicz.tech
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ssh_and_mail:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run ls -la on remote host
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "Witaj na zdalnym hoście!"
+            ls -la
+
+      - name: Send email with repository info
+        run: |
+          echo -e "Subject: GitHub Actions - $REPO_NAME\n\nWorkflow został wykonany poprawnie.\nRepozytorium: $REPO_NAME" | \
+          msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" $MAIL_TO
+
