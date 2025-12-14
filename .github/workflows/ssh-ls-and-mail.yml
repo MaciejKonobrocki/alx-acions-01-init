@@ -2,7 +2,7 @@ name: Mail Only Test
 env:
   REPO_NAME: ${{ github.repository }}
   SMTP_SERVER: mail.abix.info.pl
-  SMTP_PORT: 465
+  SMTP_PORT: 587
   SMTP_USER: alx-kurs@abix.info.pl
   SMTP_PASS: ${{ secrets.SMTP_PASS }}
   MAIL_TO: adam@jurkiewicz.tech
@@ -24,7 +24,7 @@ jobs:
       - name: Install msmtp
         run: sudo apt-get update && sudo apt-get install -y msmtp
 
-      - name: Send email with repository info
+      - name: Send email
         run: |
-          echo -e "Subject: GitHub Actions - $REPO_NAME\n\nWorkflow completed successfully.\nRepository: $REPO_NAME" | \
-          msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" --from=$SMTP_USER $MAIL_TO
+          echo -e "Subject: GitHub Actions - $REPO_NAME\n\nsuccessful\nRepository: $REPO_NAME" | \
+          msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" --from=$SMTP_USER --tls=on --tls-starttls=on $MAIL_TO
