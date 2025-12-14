@@ -27,4 +27,4 @@ jobs:
       - name: Send email with repository info
         run: |
           echo -e "Subject: GitHub Actions - $REPO_NAME\n\nWorkflow completed successfully.\nRepository: $REPO_NAME" | \
-          msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" $MAIL_TO
+          msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" --from=$SMTP_USER $MAIL_TO
