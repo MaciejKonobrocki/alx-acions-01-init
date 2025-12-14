@@ -1,0 +1,55 @@
+name: List Files and Send Email
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  list-and-email:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: List files with ls -la
+      run: |
+        echo "Running ls -la command..."
+        ls -la > ls_output.txt
+        cat ls_output.txt
+    
+    - name: Send email notification
+      run: |
+        # Read the ls -la output
+        LS_OUTPUT=$(cat ls_output.txt)
+        
+        # Create email body with ls output
+        cat > email_body.txt << 'EOF'
+        GitHub Action completed for repository: ${{ github.repository }}
+        
+        Workflow: ${{ github.workflow }}
+        Branch: ${{ github.ref_name }}
+        Commit: ${{ github.sha }}
+        Triggered by: ${{ github.actor }}
+        
+        ========================================
+        Output of ls -la command:
+        ========================================
+        
+        EOF
+        cat ls_output.txt >> email_body.txt
+        
+    - name: Send email with ls output
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: ${{ secrets.EMAIL_SERVER }}
+        server_port: ${{ secrets.EMAIL_PORT }}
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: Repository ${{ github.repository }}
+        to: ${{ secrets.EMAIL_TO }}
+        from: ${{ secrets.EMAIL_FROM }}
+        body: file://email_body.txt
