@@ -2,7 +2,7 @@ name: Mail Only Test
 env:
   REPO_NAME: ${{ github.repository }}
   SMTP_SERVER: mail.abix.info.pl
-  SMTP_PORT: 587
+  SMTP_PORT: 465
   SMTP_USER: alx-kurs@abix.info.pl
   SMTP_PASS: ${{ secrets.SMTP_PASS }}
   MAIL_TO: adam@jurkiewicz.tech
