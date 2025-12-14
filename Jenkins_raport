@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = 'python'
+        PYTHON = 'python3'
         VENV_DIR = '.venv'
     }
 
@@ -16,10 +16,16 @@ pipeline {
         stage('Setup Python env') {
             steps {
                 sh """
+                # Tworzymy wirtualne środowisko
                 ${PYTHON} -m venv ${VENV_DIR}
                 . ${VENV_DIR}/bin/activate
+
+                # Aktualizacja pip i instalacja zależności
                 pip install --upgrade pip
                 pip install -r requirements.txt
+
+                # Tworzymy folder na raporty testów
+                mkdir -p reports
                 """
             }
         }
@@ -36,10 +42,8 @@ pipeline {
 
     post {
         always {
-            // Wciągnięcie wyników testów do zakładki "Test Result"
-            // junit 'reports/junit-report.xml'
-            // blokada, bo wymaga odpowiedniej konfiguracji GitHub
-            // https://stackoverflow.com/questions/67162746/how-to-get-rid-of-noisy-warning-no-suitable-checks-publisher-found
+            echo 'Pipeline finished'
+            junit 'reports/junit-report.xml'
         }
         success {
             echo 'Tests passed 🎉'
@@ -49,4 +53,3 @@ pipeline {
         }
     }
 }
- 
