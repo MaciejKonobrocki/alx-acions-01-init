@@ -1,4 +1,4 @@
-name: SSH LS and Mail
+name: Mail Only Test
 env:
   REPO_NAME: ${{ github.repository }}
   SMTP_SERVER: mail.abix.info.pl
@@ -14,24 +14,17 @@ on:
     branches: [ main ]
 
 jobs:
-  ssh_and_mail:
+  send_mail:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run ls -la on remote host
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            ls -la
+      - name: Install msmtp
+        run: sudo apt-get update && sudo apt-get install -y msmtp
 
       - name: Send email with repository info
         run: |
           echo -e "Subject: GitHub Actions - $REPO_NAME\n\nWorkflow completed successfully.\nRepository: $REPO_NAME" | \
           msmtp --host=$SMTP_SERVER --port=$SMTP_PORT --auth=on --user=$SMTP_USER --passwordeval="echo $SMTP_PASS" $MAIL_TO
-
