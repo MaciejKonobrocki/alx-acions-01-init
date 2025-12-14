@@ -1,0 +1,39 @@
+name: Mail Only SMTPS
+env:
+  REPO_NAME: ${{ github.repository }}
+  SMTP_PASS: ${{ secrets.SMTP_PASS }}
+  MAIL_TO: adam@jurkiewicz.tech
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  send_mail:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install msmtp
+        run: sudo apt-get update && sudo apt-get install -y msmtp
+
+      - name: Configure msmtp for SMTPS 465
+        run: |
+          echo "defaults" > ~/.msmtprc
+          echo "auth on" >> ~/.msmtprc
+          echo "tls on" >> ~/.msmtprc
+          echo "host mail.abix.info.pl" >> ~/.msmtprc
+          echo "port 465" >> ~/.msmtprc
+          echo "user alx-kurs@abix.info.pl" >> ~/.msmtprc
+          echo "passwordeval echo $SMTP_PASS" >> ~/.msmtprc
+          echo "from alx-kurs@abix.info.pl" >> ~/.msmtprc
+          chmod 600 ~/.msmtprc
+
+      - name: Send email
+        run: |
+          echo -e "Subject: GitHub Actions - $REPO_NAME\n\nsuccessful\nRepository: $REPO_NAME" | \
+          msmtp $MAIL_TO
